@@ -1,0 +1,45 @@
+ char Indata;
+ char P1 = '1';
+ char P2 = '2';
+ char P3 = '3';
+ int PassCheck = 0;
+ int WrongCheck = 0;
+ int CPassCheck = 0;
+ 
+
+void Initialization()
+{
+      UART1_Init(9600);
+      TRISD = 0;
+      PortD = 0;
+      P1 = EEPROM_Read(0x01);
+      P2 = EEPROM_Read(0x02);
+      P3 = EEPROM_Read(0x03);
+}
+
+void PassChange()
+{
+            while(1)
+            {
+                  if (UART1_Data_Ready())
+                  {
+                        Indata = UART1_Read();
+
+                        if(CPassCheck == 2){CPassCheck = 3; EEPROM_Write(0x03, Indata); P3 = EEPROM_Read(0x03);}
+                        if(CPassCheck == 1){CPassCheck = 2; EEPROM_Write(0x02, Indata); P2 = EEPROM_Read(0x02);}
+                        if(CPassCheck == 0){CPassCheck = 1; EEPROM_Write(0x01, Indata); P1 = EEPROM_Read(0x01);}
+                        UART1_Write_Text("*");
+                        if(CPassCheck == 3){break;}
+                  }
+            }
+            
+            UART1_Write(10);
+            UART1_Write(13);
+            UART1_Write(10);
+            UART1_Write(13);
+}
+
+
+
+
+
